@@ -1,1 +1,0 @@
-# Manacher-s-Algorithm

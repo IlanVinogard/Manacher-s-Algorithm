@@ -1,0 +1,66 @@
+# Manacher-s-Algorithm
+## I'll go through all algorithm and explain the main idea and how it was involved in the code.
+
+Main idea of Manacher's Algorithm is to find longest palindromic substring by using O(n) time complexity, this faster than the casual way 'brute force' that give us o(n^3) time complexity.
+So what Manacher's Algorthim does, it takes the string creating new string and add special characters like '$' and '#' to able us check the palindromics with odd length or even **E.g. string s = aba;   string newString = $#a#b#a#;                            
+OR string s = abba;     string newString =$#a#b#b#a# , I'll explain later why we add '$'** next we creating new array of the size of new string to manitor our palindrome size **E.g. vector<int> p(n, 0) = p[0,0,0,0,..,n]**.
+Now the function starting from first character of the new string checking if we can expand it to lerger palindrome if we can we add + 1 to our array p[i], to know what is the size of the current palindrome, if not we check if it larger than lergest palindrome before, if not we continue check next index in the string until the string ends here we can see why we add '$' to our newString the reason was to be able check if first charater '#' is can be expand  
+**E.g. $ # a#...              
+      => ^ || ^ can't expand ($ != a) to avoid bug or Error but we can start from second index of the string 'a' and we won't need '$' but I add to avoid Errors.**
+      
+and we return the substr function that returns substr(startOfLargestPalindrome, lengthOfLargestPalindrome);
+
+
+Code Step By Step:
+------------------
+1:declare variables.
+
+        int maxRightPalindromeBounder = 0;
+        int centerRightPalindrome = 0;
+        int lengthOfLargestPalindrome = 0;
+        int startOfLargestPalindrome = 0;
+
+2:here we creating new string and add our special characters '$' and '#'.
+
+       string preProcessingStr = "$#";
+        for (char c : s){
+            preProcessingStr += c;
+            preProcessingStr += '#';
+        }
+
+3: creating vector named p(n,0) = p[0,0,0,..,n] to include sizes of palindromes E.g. string = $#a#b#aB p = [0,1,2,1,4,1,2,1]. 
+
+        int preProcessingStrLength = preProcessingStr.length();
+        vector<int> p(preProcessingStrLength, 0);
+
+4: Inside For loop --> we check here if 'i' is inside of the rightest palindrome, if 'i' smaller                           
+than maxRightPalindromeBounder that means it inside of rightest palindrome so we see here something like mirror like here  string = $#a#b#aB p = [0,**1,2,1**,4,**1,2,1**], same sides of the rightest palindrome this => string = $#a#b#aB p = [**0,1,2,1,4,1,2,1**]. if it larger so the p[i] = 1 because it a new palindrome out side the rightest palindrome.
+
+            if (i < maxRightPalindromeBounder)
+            p[i] = min(p[centerRightPalindrome*2 - i], maxRightPalindromeBounder - i);
+            else 
+            p[i] = 1;
+
+5.  Inside For loop --> now we trying to expand our new palindrome and add +1 every expand.
+
+            while (preProcessingStr[i + p[i]] == preProcessingStr[i - p[i]]){
+                p[i]++;
+            }
+
+6.  Inside For loop --> here we heck if new palindrome is rightest than new palindrome before, if yes we update the variables to new like maxRightPalindromeBounder and give the index of he center of this palindrome ==> centerRightPalindrome.
+
+            if (i + p[i] > maxRightPalindromeBounder){
+                maxRightPalindromeBounder = i + p[i];
+                centerRightPalindrome = i;
+            }
+
+7.  Inside For loop --> now if the new palindrome in larger than the largest palindrome, if yes we update our variables of the lengthOfLargestPalindrome and startOfLargestPalindrome.
+
+            if (p[i] > lengthOfLargestPalindrome){
+                lengthOfLargestPalindrome = p[i];
+                startOfLargestPalindrome = (i - lengthOfLargestPalindrome) / 2;
+            }
+
+8. Out side For loop --> here we return the string of the largest palindrome by using the function substr();
+   
+            return s.substr(startOfLargestPalindrome, lengthOfLargestPalindrome - 1);
