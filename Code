@@ -1,5 +1,5 @@
     string longestPalindrome(string s) {
-        int maxRightPalindromeDiameter = 0;
+        int maxRightPalindromeBounder = 0;
         int centerRightPalindrome = 0;
 
         int lengthOfLargestPalindrome = 0;
@@ -15,8 +15,8 @@
         vector<int> p(preProcessingStrLength, 0);
 
         for (int i = 1; i < preProcessingStrLength; i++){
-            if (i < maxRightPalindromeDiameter)
-            p[i] = min(p[centerRightPalindrome*2 - i], maxRightPalindromeDiameter - i);
+            if (i < maxRightPalindromeBounder)
+            p[i] = min(p[centerRightPalindrome*2 - i], maxRightPalindromeBounder - i);
             else 
             p[i] = 1;
 
@@ -24,8 +24,8 @@
                 p[i]++;
             }
 
-            if (i + p[i] > maxRightPalindromeDiameter){
-                maxRightPalindromeDiameter = i + p[i];
+            if (i + p[i] > maxRightPalindromeBounder){
+                maxRightPalindromeBounder = i + p[i];
                 centerRightPalindrome = i;
             }
 
